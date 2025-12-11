@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String
+  bio       String?
+  avatar    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  sessions       Session[]
+  sentRequests   Relationship[] @relation("RequesterRelationships")
+  receivedRequests Relationship[] @relation("AddresseeRelationships")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model Relationship {
+  id          String            @id @default(uuid())
+  requesterId String
+  addresseeId String
+  status      RelationshipStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  requester User @relation("RequesterRelationships", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("AddresseeRelationships", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([requesterId])
+  @@index([addresseeId])
+  @@index([status])
+}
+
+enum RelationshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
