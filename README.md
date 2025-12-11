@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Documentation
 
-## Getting Started
+Next.js 15 application with React 19, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Setup
 
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Configure environment variables:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Start development server:
+```bash
+npm run dev
+```
 
-## Learn More
+The application will run on `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
+## Build and Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Build for production:
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Start production server:
+```bash
+npm start
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+frontend/
+├── app/
+│   ├── (auth)/           # Auth routes (login, register)
+│   ├── (dashboard)/      # Protected dashboard routes
+│   ├── layout.tsx        # Root layout with AuthProvider
+│   └── page.tsx          # Landing page
+├── components/
+│   ├── ui/               # Reusable UI components
+│   ├── auth/             # Authentication components
+│   └── dashboard/        # Dashboard-specific components
+├── lib/
+│   ├── api.ts            # API client with interceptors
+│   ├── auth.ts           # Auth utilities
+│   ├── contexts/         # React contexts (AuthContext)
+│   └── utils.ts          # Utility functions
+├── types/                # TypeScript type definitions
+└── hooks/                # Custom React hooks
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Component Structure
+
+### UI Components (`components/ui/`)
+
+- **Button**: Reusable button with variants (primary, secondary, outline, ghost, danger)
+- **Input**: Form input with label and error display
+- **ErrorBoundary**: Error boundary for error handling
+
+### Auth Components (`components/auth/`)
+
+- **AuthForm**: Reusable form for login/register
+- **ProtectedRoute**: Route protection wrapper
+
+### Dashboard Components (`components/dashboard/`)
+
+- **Navbar**: Navigation bar with auth state
+- **UserCard**: User profile card display
+- **RelationshipButton**: Add/remove friend button
+- **FriendRequest**: Friend request component
+
+## State Management
+
+### Auth Context
+
+Global authentication state managed via React Context:
+
+```typescript
+const { user, isLoading, login, register, logout, updateUser } = useAuth();
+```
+
+### Custom Hooks
+
+- **useAuth**: Access authentication state and methods
+- **useRelationships**: Manage relationship data
+
+## API Client
+
+Centralized API client in `lib/api.ts`:
+
+- Automatic JWT token attachment
+- Request/response interceptors
+- Error handling and retry logic
+- Automatic redirect on 401
+
+## Routing
+
+Uses Next.js App Router:
+
+- `/` - Landing page (public)
+- `/login` - Login page (public)
+- `/register` - Registration page (public)
+- `/dashboard` - Main dashboard (protected)
+- `/profile` - User profile (protected)
+- `/users` - User discovery/search (protected)
+- `/friends` - Friends list (protected)
+
+## Styling
+
+Uses Tailwind CSS with a modern design system:
+
+- Mobile-first responsive approach
+- Consistent color scheme
+- Smooth animations and transitions
+- Accessible components
+
+## Form Validation
+
+Uses React Hook Form with Zod validation:
+
+- Client-side validation
+- Type-safe form handling
+- User-friendly error messages
+
+## Mobile Responsiveness
+
+All pages are mobile-responsive:
+
+- Mobile-first design approach
+- Responsive navigation
+- Touch-friendly interactions
+- Optimized layouts for all screen sizes
+
+## Environment Variables
+
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:5000/api`)
+
+## Type Safety
+
+Full TypeScript coverage with type definitions in `types/`:
+
+- `user.ts`: User types
+- `auth.ts`: Authentication types
+- `relationship.ts`: Relationship types
+- `api.ts`: API response types
+
+## Error Handling
+
+- Error boundaries for component errors
+- User-friendly error messages
+- API error handling with retry logic
+- Form validation errors displayed inline
